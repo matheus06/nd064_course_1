@@ -103,9 +103,10 @@ def status():
 # start the application on port 3111
 if __name__ == "__main__":
    stdout_handler = logging.StreamHandler(sys.stdout)
+   fileHandler = logging.FileHandler("app.log")
    logging.basicConfig(
         level=logging.DEBUG,
-        handlers=[stdout_handler],
+        handlers=[stdout_handler,fileHandler],
         format='%(levelname)s:%(name)s:%(asctime)s - %(message)s'
     )
    app.run(host='0.0.0.0', port='3111')
