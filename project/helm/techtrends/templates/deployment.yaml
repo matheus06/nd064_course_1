@@ -1,61 +1,42 @@
-apiVersion: apps/v1
+aapiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "techtrends.fullname" . }}
-  labels:
-    {{- include "techtrends.labels" . | nindent 4 }}
+    creationTimestamp: null
+    labels:
+        app: techtrends
+    name: techtrends
+    namespace: {{ .Values.namespace.name }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
-  selector:
-    matchLabels:
-      {{- include "techtrends.selectorLabels" . | nindent 6 }}
-  template:
-    metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      labels:
-        {{- include "techtrends.selectorLabels" . | nindent 8 }}
-    spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "techtrends.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+    replicas: {{ .Values.replicaCount }} 
+    selector:
+        matchLabels:
+            app: techtrends
+    strategy: {}
+    template:
+        metadata:
+            creationTimestamp: null
+            labels:
+                app: techtrends
+        spec:
+            containers:
+                - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+                  name: techtrends
+                  imagePullPolicy: {{ .Values.image.pullPolicy }}
+                  readinessProbe:
+                      httpGet:
+                          path: {{ .Values.readinessProbe.path }}
+                          port: {{ .Values.readinessProbe.port }}
+                  livenessProbe:
+                      httpGet: 
+                          path: {{ .Values.livenessProbe.path }}
+                          port: {{ .Values.livenessProbe.port }}
+                  ports:
+                      - containerPort: {{ .Values.containerPort }}
+                  resources:
+                      requests:
+                          cpu: {{ .Values.resources.requests.CPU }}
+                          memory: {{ .Values.resources.requests.memory }}
+                      limits:
+                          cpu: {{ .Values.resources.limits.CPU }}
+                          memory: {{ .Values.resources.limits.memory }}
+status: {}
