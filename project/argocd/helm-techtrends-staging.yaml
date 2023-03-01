@@ -12,6 +12,6 @@ spec:
     helm:
       valueFiles:
       - values-staging.yaml
-    path: ../helm/techtrends
-    repoURL: https://github.com/udacity/nd064_course_1
+    path: project/helm/techtrends
+    repoURL: https://github.com/matheus06/nd064_course_1
     targetRevision: HEAD
